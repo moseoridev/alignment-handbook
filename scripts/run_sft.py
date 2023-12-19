@@ -105,7 +105,7 @@ def main():
         apply_chat_template_kullm, fn_kwargs={"tokenizer": tokenizer, "task": "sft"}
     )
     train_dataset = raw_datasets["train"]
-    eval_dataset = raw_datasets["test"]
+    # eval_dataset = raw_datasets["test"]
 
     with training_args.main_process_first(
         desc="Log a few random samples from the processed training set"
@@ -145,7 +145,7 @@ def main():
         model_init_kwargs=model_kwargs,
         args=training_args,
         train_dataset=train_dataset,
-        eval_dataset=eval_dataset,
+        # eval_dataset=eval_dataset,
         dataset_text_field="text",
         max_seq_length=training_args.max_seq_length,
         tokenizer=tokenizer,
@@ -172,17 +172,17 @@ def main():
     ##########
     # Evaluate
     ##########
-    if training_args.do_eval:
-        logger.info("*** Evaluate ***")
-        metrics = trainer.evaluate()
-        max_eval_samples = (
-            data_args.max_eval_samples
-            if data_args.max_eval_samples is not None
-            else len(eval_dataset)
-        )
-        metrics["eval_samples"] = min(max_eval_samples, len(eval_dataset))
-        trainer.log_metrics("eval", metrics)
-        trainer.save_metrics("eval", metrics)
+    # if training_args.do_eval:
+    #     logger.info("*** Evaluate ***")
+    #     metrics = trainer.evaluate()
+    #     max_eval_samples = (
+    #         data_args.max_eval_samples
+    #         if data_args.max_eval_samples is not None
+    #         else len(eval_dataset)
+    #     )
+    #     metrics["eval_samples"] = min(max_eval_samples, len(eval_dataset))
+    #     trainer.log_metrics("eval", metrics)
+    #     trainer.save_metrics("eval", metrics)
 
     ##################################
     # Save model and create model card
