@@ -27,6 +27,8 @@ import transformers
 from transformers import set_seed
 
 from accelerate import Accelerator
+
+sys.path.append("./src")
 from alignment import (
     DataArguments,
     H4ArgumentParser,
