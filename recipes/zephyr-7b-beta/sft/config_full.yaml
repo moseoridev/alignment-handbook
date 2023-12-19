@@ -16,7 +16,7 @@ do_eval: false
 evaluation_strategy: epoch
 gradient_accumulation_steps: 2
 gradient_checkpointing: true
-hub_model_id: llama_v7_recipe
+hub_model_id: moseoridev/llama_v7_recipe
 hub_strategy: end
 learning_rate: 2.0e-05
 log_level: info

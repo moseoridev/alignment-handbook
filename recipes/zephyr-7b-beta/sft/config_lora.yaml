@@ -29,7 +29,7 @@ gradient_accumulation_steps: 128
 gradient_checkpointing: true
 gradient_checkpointing_kwargs:
   use_reentrant: false
-hub_model_id: llama_v7_recipe
+hub_model_id: moseoridev/llama_v7_recipe
 hub_strategy: end
 learning_rate: 2.0e-05
 log_level: info
