@@ -33,6 +33,7 @@ from alignment import (
     ModelArguments,
     SFTConfig,
     apply_chat_template,
+    apply_chat_template_kullm,
     get_datasets,
     get_kbit_device_map,
     get_peft_config,
@@ -94,20 +95,32 @@ def main():
     #####################
     # Apply chat template
     #####################
-    raw_datasets = raw_datasets.map(apply_chat_template, fn_kwargs={"tokenizer": tokenizer, "task": "sft"})
+
+    # raw_datasets = raw_datasets.map(
+    #     apply_chat_template, fn_kwargs={"tokenizer": tokenizer, "task": "sft"}
+    # )
+    raw_datasets = raw_datasets.map(
+        apply_chat_template_kullm, fn_kwargs={"tokenizer": tokenizer, "task": "sft"}
+    )
     train_dataset = raw_datasets["train"]
     eval_dataset = raw_datasets["test"]
 
-    with training_args.main_process_first(desc="Log a few random samples from the processed training set"):
+    with training_args.main_process_first(
+        desc="Log a few random samples from the processed training set"
+    ):
         for index in random.sample(range(len(raw_datasets["train"])), 3):
-            logger.info(f"Sample {index} of the processed training set:\n\n{raw_datasets['train'][index]['text']}")
+            logger.info(
+                f"Sample {index} of the processed training set:\n\n{raw_datasets['train'][index]['text']}"
+            )
 
     #######################
     # Load pretrained model
     #######################
     logger.info("*** Load pretrained model ***")
     torch_dtype = (
-        model_args.torch_dtype if model_args.torch_dtype in ["auto", None] else getattr(torch, model_args.torch_dtype)
+        model_args.torch_dtype
+        if model_args.torch_dtype in ["auto", None]
+        else getattr(torch, model_args.torch_dtype)
     )
     quantization_config = get_quantization_config(model_args)
 
@@ -144,7 +157,11 @@ def main():
     logger.info("*** Train ***")
     train_result = trainer.train()
     metrics = train_result.metrics
-    max_train_samples = data_args.max_train_samples if data_args.max_train_samples is not None else len(train_dataset)
+    max_train_samples = (
+        data_args.max_train_samples
+        if data_args.max_train_samples is not None
+        else len(train_dataset)
+    )
     metrics["train_samples"] = min(max_train_samples, len(train_dataset))
     trainer.log_metrics("train", metrics)
     trainer.save_metrics("train", metrics)
@@ -156,7 +173,11 @@ def main():
     if training_args.do_eval:
         logger.info("*** Evaluate ***")
         metrics = trainer.evaluate()
-        max_eval_samples = data_args.max_eval_samples if data_args.max_eval_samples is not None else len(eval_dataset)
+        max_eval_samples = (
+            data_args.max_eval_samples
+            if data_args.max_eval_samples is not None
+            else len(eval_dataset)
+        )
         metrics["eval_samples"] = min(max_eval_samples, len(eval_dataset))
         trainer.log_metrics("eval", metrics)
         trainer.save_metrics("eval", metrics)
